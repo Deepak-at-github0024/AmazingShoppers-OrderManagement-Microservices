@@ -1,0 +1,10 @@
+# In root .gitignore
+**/target/
+**/.idea/
+**/*.iml
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+.DS_Store
+*.log
+application-secrets.yml
