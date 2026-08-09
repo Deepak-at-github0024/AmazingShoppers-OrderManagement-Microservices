@@ -21,6 +21,18 @@ public class ProductResponse {
 
     private LocalDateTime updatedAt;
 
+    public ProductResponse() {
+    }
+
+    public ProductResponse(Long id, String name, String description, Integer quantity, BigDecimal price, String category) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+        this.price = price;
+        this.category = category;
+    }
+
     public Long getId() {
         return id;
     }
