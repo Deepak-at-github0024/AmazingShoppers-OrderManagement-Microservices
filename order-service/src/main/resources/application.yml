@@ -2,5 +2,23 @@ spring:
   application:
     name: order-service
 
+
+  datasource:
+      url: ${ORDER_DB_URL}
+      username: ${ORDER_DB_USERNAME}
+      password: ${ORDER_DB_PASSWORD}
+
+  jpa:
+      hibernate:
+        ddl-auto: update
+
+      show-sql: true
+
+
 server:
   port: 8081
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
