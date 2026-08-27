@@ -7,8 +7,11 @@ import com.example.user_service.Mapper.UserMapper;
 import com.example.user_service.Repository.UserRepository;
 import com.example.user_service.Service.UserService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -32,12 +35,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponse> getAllUsers() {
-        return List.of();
+
+        List<UserResponse> userResponseList = new ArrayList<>();
+
+        List<User> userList = userRepository.findAll();
+        if(!CollectionUtils.isEmpty(userList))
+        {
+           for(User user : userList)
+           {
+               UserResponse userResponse =  UserMapper.toResponse(user);
+               userResponseList.add(userResponse);
+           }
+        }
+        return  userResponseList ;
     }
 
     @Override
     public UserResponse getUserById(Long id) {
-        return null;
+
+        UserResponse userResponse = new UserResponse();
+
+        Optional<User> user = userRepository.findById(id) ;
+        if(user.isPresent())
+        {
+            userResponse = UserMapper.toResponse(user.get()) ;
+        }
+        return userResponse ;
     }
 
     @Override
