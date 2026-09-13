@@ -3,12 +3,12 @@ package com.example.user_service.Controller;
 import com.example.user_service.DTO.UserRequest;
 import com.example.user_service.DTO.UserResponse;
 import com.example.user_service.Service.Impl.UserServiceImpl;
-import jakarta.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 
 @RestController
@@ -40,17 +40,15 @@ public class UserController {
     }
 
     @GetMapping("/userById/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id)
-    {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) throws UserPrincipalNotFoundException {
         UserResponse userResponse = userService.getUserById(id);
 
         return ResponseEntity.ok(userResponse);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest us)
-    {
-        UserResponse userResponse = userService.updateUserbyId(id, us);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest us) throws UserPrincipalNotFoundException {
+        UserResponse userResponse = userService.updateUserById(id, us);
 
         return  ResponseEntity.ok(userResponse);
     }

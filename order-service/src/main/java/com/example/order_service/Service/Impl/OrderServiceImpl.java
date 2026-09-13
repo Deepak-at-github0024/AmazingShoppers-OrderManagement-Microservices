@@ -3,6 +3,7 @@ package com.example.order_service.Service.Impl;
 import com.example.order_service.DTO.OrderRequest;
 import com.example.order_service.DTO.OrderResponse;
 import com.example.order_service.Entity.Order;
+import com.example.order_service.Exception.OrderDetailsNotFoundException;
 import com.example.order_service.Mapper.OrderMapper;
 import com.example.order_service.Repository.OrderRepository;
 import com.example.order_service.Service.OrderService;
@@ -43,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
         Optional<Order> orderById = orderRepository.findById(id) ;
 
-        return orderById.stream().map(OrderMapper::toResponse).findAny().orElseThrow(()-> new RuntimeException("No Order Exists for the id"));
+        return orderById.stream().map(OrderMapper::toResponse).findAny().orElseThrow(()-> new OrderDetailsNotFoundException("No Order Exists for the id "+id));
 
     }
 
@@ -51,6 +52,12 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse updateOrderById(@PathVariable  Long id,@RequestBody OrderRequest orderRequest) {
 
         Optional<Order> updateOrder = orderRepository.findById(id);
+        if(updateOrder.isEmpty())
+        {
+            throw new OrderDetailsNotFoundException("No Order exist for id "+id) ;
+        }
+
+
             Order order = updateOrder.get();
 
             order.setUserId(orderRequest.getUserId());
@@ -75,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.deleteById(id);
         }
         else {
-            throw new RuntimeException("No Order Exists with Id") ;
+            throw new OrderDetailsNotFoundException("No Order exist for id "+id) ;
         }
 
     }

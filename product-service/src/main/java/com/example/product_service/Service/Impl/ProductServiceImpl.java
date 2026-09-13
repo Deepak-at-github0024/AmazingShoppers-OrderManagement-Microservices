@@ -3,6 +3,7 @@ package com.example.product_service.Service.Impl;
 import com.example.product_service.DTO.ProductRequest;
 import com.example.product_service.DTO.ProductResponse;
 import com.example.product_service.Entity.Product;
+import com.example.product_service.Exception.ProductNotFoundException;
 import com.example.product_service.Mapper.ProductMapper;
 import com.example.product_service.Repository.ProductRepository;
 import com.example.product_service.Service.ProductService;
@@ -25,6 +26,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse createProduct(@RequestBody  ProductRequest request) {
 
+       boolean existByNameAndCategory = productRepository.existsByNameAndCategory(request.getName(),request.getCategory()) ;
+
+        if(existByNameAndCategory)
+        {
+            throw new ProductNotFoundException(
+                    "Product Already Exists with the name "+request.getName()+" and category "+request.getCategory());
+        }
+
         Product product = ProductMapper.toEntity(request);
         Product savedProduct = productRepository.save(product);
 
@@ -46,13 +55,18 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> productById = productRepository.findById(id);
 
       return productById.stream().map(ProductMapper::toResponse).findAny()
-              .orElseThrow(()-> new RuntimeException("No Products"));
+              .orElseThrow(()-> new ProductNotFoundException("Product Not Available with id "+id) );
     }
 
     @Override
     public ProductResponse updateProduct(Long id, ProductRequest request) {
 
         Optional<Product> product = productRepository.findById(id);
+        if(product.isEmpty())
+        {
+            throw new ProductNotFoundException("Product Not Available with id "+id);
+        }
+
         Product existingProduct = product.get();
 
         existingProduct.setName(request.getName());
@@ -82,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.deleteById(id);
         }
         else
-            throw  new RuntimeException("No Product Exists For the ID") ;
+            throw new ProductNotFoundException("Product Not Available with id "+id);
 
 
     }

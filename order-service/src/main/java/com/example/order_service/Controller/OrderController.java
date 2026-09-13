@@ -27,6 +27,8 @@ public class OrderController {
     @PostMapping("/createOrder")
     public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest)
     {
+
+
         OrderResponse orderResponse = orderService.createOrder(orderRequest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
@@ -40,7 +42,7 @@ public class OrderController {
      return  ResponseEntity.ok(response);
     }
 
-    @GetMapping("orderById/{id}")
+    @GetMapping("/orderById/{id}")
     public ResponseEntity<OrderResponse> getOrderById(@PathVariable Long id)
     {
         OrderResponse orderResponse = orderService.getOrderById(id);

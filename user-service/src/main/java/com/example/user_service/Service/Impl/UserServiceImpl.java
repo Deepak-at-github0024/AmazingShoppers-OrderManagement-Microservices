@@ -3,11 +3,13 @@ package com.example.user_service.Service.Impl;
 import com.example.user_service.DTO.UserRequest;
 import com.example.user_service.DTO.UserResponse;
 import com.example.user_service.Entity.User;
+import com.example.user_service.Exception.UsersPrincipalNotFoundException;
 import com.example.user_service.Mapper.UserMapper;
 import com.example.user_service.Repository.UserRepository;
 import com.example.user_service.Service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse createUser(UserRequest userRequest) {
+
+        boolean existByEmailOrPhoneNumber = userRepository.existsByEmailOrPhoneNumber(
+                userRequest.getEmail(),userRequest.getPhoneNumber());
+        if(existByEmailOrPhoneNumber)
+        {
+            throw new UsersPrincipalNotFoundException("User Already Exists with Given Email or Phone Number") ;
+        }
 
         User user = UserMapper.toEntity(userRequest);
 
@@ -56,21 +65,47 @@ public class UserServiceImpl implements UserService {
         UserResponse userResponse = new UserResponse();
 
         Optional<User> user = userRepository.findById(id) ;
-        if(user.isPresent())
+        if(user.isEmpty())
         {
-            userResponse = UserMapper.toResponse(user.get()) ;
+           throw new UsersPrincipalNotFoundException("User Not Found For User id "+id) ;
         }
+        userResponse = UserMapper.toResponse(user.get()) ;
         return userResponse ;
     }
 
     @Override
-    public UserResponse updateUserbyId(Long id , UserRequest us) {
+    public UserResponse updateUserById(Long id , UserRequest us)  {
 
-        return null;
+       Optional<User> user = userRepository.findById(id);
+       if(user.isPresent())
+       {
+           User userUpdate = user.get();
+           userUpdate.setFirstName(us.getFirstName());
+           userUpdate.setLastName(us.getLastName());
+           userUpdate.setEmail(us.getEmail());
+           userUpdate.setPassword(us.getPassword());
+           userUpdate.setPhoneNumber(us.getPhoneNumber());
+           userUpdate.setStatus(us.getStatus());
+
+           userRepository.save(userUpdate);
+       }
+       else
+       {
+           throw new UsersPrincipalNotFoundException("No User Exists for userId : "+id) ;
+       }
+
+        User fetchedUser = user.get();
+        return UserMapper.toResponse(fetchedUser);
     }
 
     @Override
     public void deleteUser(Long id) {
 
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty())
+        {
+            throw new UsersPrincipalNotFoundException("No User Exists for userId : "+id) ;
+        }
+        userRepository.deleteById(id);
     }
 }
