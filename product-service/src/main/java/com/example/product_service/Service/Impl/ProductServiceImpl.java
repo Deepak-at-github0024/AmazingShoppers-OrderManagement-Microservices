@@ -10,6 +10,7 @@ import com.example.product_service.Service.ProductService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,18 +63,13 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse updateProduct(Long id, ProductRequest request) {
 
         Optional<Product> product = productRepository.findById(id);
-        if(product.isEmpty())
-        {
-            throw new ProductNotFoundException("Product Not Available with id "+id);
+        if (product.isEmpty()) {
+            throw new ProductNotFoundException("Product Not Available with id " + id);
         }
 
         Product existingProduct = product.get();
 
-        existingProduct.setName(request.getName());
-        existingProduct.setCategory(request.getCategory());
-        existingProduct.setPrice(request.getPrice());
-        existingProduct.setDescription(request.getDescription());
-        existingProduct.setQuantity(request.getQuantity());
+        ProductMapper.updateEntity(existingProduct,request);
 
         productRepository.save(existingProduct);
 
@@ -82,8 +78,7 @@ public class ProductServiceImpl implements ProductService {
                 existingProduct.getCategory());
 
 
-
-        return pr ;
+        return pr;
     }
 
     @Override

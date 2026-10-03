@@ -35,6 +35,28 @@ public class ProductMapper {
         return response;
     }
 
+    public static void updateEntity(Product existingProduct , ProductRequest request)
+    {
+        if (request.getName() != null) {
+            existingProduct.setName(request.getName());
+        }
+
+        if (request.getCategory() != null) {
+            existingProduct.setCategory(request.getCategory());
+        }
+
+        if (request.getPrice() != null) {
+            existingProduct.setPrice(request.getPrice());
+        }
+
+        if (request.getDescription() != null) {
+            existingProduct.setDescription(request.getDescription());
+        }
+
+        if (request.getQuantity() != null) {
+            existingProduct.setQuantity(request.getQuantity());
+        }
+    }
 
 
 }

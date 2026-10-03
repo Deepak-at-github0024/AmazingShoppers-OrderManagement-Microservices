@@ -14,19 +14,15 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String name;
 
     @Column(length = 1000)
     private String description;
 
-    @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
     private Integer quantity;
 
-    @Column(nullable = false)
     private String category;
 
     @Column(nullable = false)

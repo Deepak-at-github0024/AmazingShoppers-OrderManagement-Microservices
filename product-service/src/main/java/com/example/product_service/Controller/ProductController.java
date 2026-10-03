@@ -46,7 +46,7 @@ public class ProductController {
        return  ResponseEntity.ok(byId);
    }
 
-   @PutMapping("/updateProducById/{id}")
+   @PatchMapping("/updateProducById/{id}")
     public ResponseEntity<ProductResponse> updateProductByID(@PathVariable Long id , @RequestBody ProductRequest pr)
    {
        ProductResponse prd = productService.updateProduct(id,pr) ;
