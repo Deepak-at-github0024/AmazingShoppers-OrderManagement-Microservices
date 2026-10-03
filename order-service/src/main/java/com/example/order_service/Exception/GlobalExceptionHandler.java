@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(OrderDetailsNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleUserNotFoundException(
+    public ResponseEntity<ErrorResponse> handleOrderException(
             OrderDetailsNotFoundException ex , HttpServletRequest request )
     {
 
@@ -27,6 +27,43 @@ public class GlobalExceptionHandler {
      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err );
 
     }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProductException(
+            ProductNotFoundException ex , HttpServletRequest request )
+    {
+
+        ErrorResponse err = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Product Do not exits",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err );
+
+    }
+
+    @ExceptionHandler(UsersPrincipalNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserException(
+            UsersPrincipalNotFoundException ex , HttpServletRequest request )
+
+
+    {
+
+        ErrorResponse err = new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "User do not exists",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err );
+
+    }
+
 
 
 

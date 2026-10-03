@@ -1,7 +1,11 @@
 package com.example.order_service.Controller;
 
+import com.example.order_service.Client.ProductClient;
+import com.example.order_service.Client.UserClient;
 import com.example.order_service.DTO.OrderRequest;
 import com.example.order_service.DTO.OrderResponse;
+import com.example.order_service.DTO.ProductResponse;
+import com.example.order_service.DTO.UserResponse;
 import com.example.order_service.Service.Impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +18,30 @@ import java.util.List;
 @RequestMapping("/orders")
 public class OrderController {
 
+    @Autowired
+    private ProductClient productClient ;
+
+    @Autowired
+    private UserClient userClient ;
 
     @Autowired
     private OrderServiceImpl orderService ;
+
+    @GetMapping("/test-product/{id}")
+    public ResponseEntity<ProductResponse> getProductFromProductService(@PathVariable Long id)
+    {
+        ProductResponse productResponse = productClient.getProductById(id);
+
+        return ResponseEntity.ok(productResponse);
+    }
+
+    @GetMapping("/userVerification/{id}")
+    public ResponseEntity<UserResponse> verifyUserExistsOrNo(@PathVariable Long id )
+    {
+        UserResponse userResponse = userClient.getUserById(id) ;
+
+        return ResponseEntity.ok(userResponse);
+    }
 
     @GetMapping("/test")
     public String test() {
@@ -65,5 +90,14 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @GetMapping("/ordersByUserId/{id}")
+    public ResponseEntity<List<OrderResponse>> getOrderListByUserId(@PathVariable Long id)
+    {
+       List<OrderResponse> orderResponse = orderService.getOrderListByUserId(id);
+
+       return ResponseEntity.ok(orderResponse);
+    }
+
 }
 

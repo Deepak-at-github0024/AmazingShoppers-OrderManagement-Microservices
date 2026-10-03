@@ -14,8 +14,7 @@ public class OrderMapper {
         order.setUserId(request.getUserId());
         order.setProductId(request.getProductId());
         order.setQuantity(request.getQuantity());
-        order.setTotalAmount(request.getTotalAmount());
-        order.setStatus(request.getStatus());
+
 
 
 

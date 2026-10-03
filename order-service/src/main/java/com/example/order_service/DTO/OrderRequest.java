@@ -8,8 +8,6 @@ public class OrderRequest {
     private Long userId;
     private Long productId;
     private Integer quantity;
-    private BigDecimal totalAmount;
-    private OrderStatus status;
 
     public Long getUserId() {
         return userId;
@@ -35,30 +33,12 @@ public class OrderRequest {
         this.quantity = quantity;
     }
 
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
     @Override
     public String toString() {
         return "OrderRequest{" +
                 "userId=" + userId +
                 ", productId=" + productId +
                 ", quantity=" + quantity +
-                ", totalAmount=" + totalAmount +
-                ", status=" + status +
                 '}';
     }
 }

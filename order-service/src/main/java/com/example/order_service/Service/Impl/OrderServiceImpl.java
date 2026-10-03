@@ -1,34 +1,50 @@
 package com.example.order_service.Service.Impl;
 
+import com.example.order_service.Client.ProductClient;
+import com.example.order_service.Client.UserClient;
 import com.example.order_service.DTO.OrderRequest;
 import com.example.order_service.DTO.OrderResponse;
+import com.example.order_service.DTO.ProductResponse;
+import com.example.order_service.DTO.UserResponse;
 import com.example.order_service.Entity.Order;
 import com.example.order_service.Exception.OrderDetailsNotFoundException;
 import com.example.order_service.Mapper.OrderMapper;
 import com.example.order_service.Repository.OrderRepository;
 import com.example.order_service.Service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.swing.text.html.Option;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository ;
+    private final OrderRepository orderRepository ;
+    private final ProductClient productClient ;
+    private final UserClient userClient ;
+
+    public OrderServiceImpl(OrderRepository orderRepository, ProductClient productClient, UserClient userClient) {
+        this.orderRepository = orderRepository;
+        this.productClient = productClient;
+        this.userClient = userClient;
+    }
 
     @Override
     public OrderResponse createOrder(OrderRequest orderRequest) {
 
-        Order order = OrderMapper.toEntity(orderRequest);
-        Order savedOrder = orderRepository.save(order) ;
+        ProductResponse product = productClient.getProductById(orderRequest.getProductId());
+        UserResponse user = userClient.getUserById(orderRequest.getUserId());
 
-        return  OrderMapper.toResponse(savedOrder);
+        Order order = OrderMapper.toEntity(orderRequest);
+        BigDecimal totalOrderAmount = product.getPrice().multiply(BigDecimal.valueOf(orderRequest.getQuantity()));
+        order.setTotalAmount(totalOrderAmount);
+        Order savedOrder = orderRepository.save(order);
+
+        return OrderMapper.toResponse(savedOrder);
     }
 
     @Override
@@ -49,6 +65,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderResponse> getOrderListByUserId(Long id) {
+
+        List<Order> userOrderList = orderRepository.findByUserId(id);
+
+        if(CollectionUtils.isEmpty(userOrderList))
+        {
+            throw new OrderDetailsNotFoundException("No Order exist for the user");
+        }
+
+        return userOrderList.stream().map(OrderMapper::toResponse).toList();
+    }
+
+    @Override
     public OrderResponse updateOrderById(@PathVariable  Long id,@RequestBody OrderRequest orderRequest) {
 
         Optional<Order> updateOrder = orderRepository.findById(id);
@@ -63,8 +92,6 @@ public class OrderServiceImpl implements OrderService {
             order.setUserId(orderRequest.getUserId());
             order.setProductId(orderRequest.getProductId());
             order.setQuantity(orderRequest.getQuantity());
-            order.setTotalAmount(orderRequest.getTotalAmount());
-            order.setStatus(orderRequest.getStatus());
 
             orderRepository.save(order);
 
