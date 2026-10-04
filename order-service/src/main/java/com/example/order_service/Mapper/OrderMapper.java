@@ -37,4 +37,20 @@ public class OrderMapper {
         return orderResponse ;
 
     }
+
+    public static void updatedEntity(Order order , OrderRequest or)
+    {
+        if(or.getUserId() != null){
+            order.setUserId(or.getUserId());
+        }
+        if(or.getProductId() != null ){
+            order.setProductId(or.getProductId());
+        }
+        if(or.getQuantity() != null ){
+            order.setQuantity(or.getQuantity());
+        }
+        if(or.getStatus() != null){
+            order.setStatus(or.getStatus());
+        }
+    }
 }

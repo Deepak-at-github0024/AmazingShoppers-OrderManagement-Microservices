@@ -12,6 +12,7 @@ import com.example.order_service.Mapper.OrderMapper;
 import com.example.order_service.Repository.OrderRepository;
 import com.example.order_service.Service.OrderService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -78,38 +79,61 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse updateOrderById(@PathVariable  Long id,@RequestBody OrderRequest orderRequest) {
+    public OrderResponse updateOrderById(@PathVariable Long id, @RequestBody OrderRequest orderRequest) {
 
         Optional<Order> updateOrder = orderRepository.findById(id);
-        if(updateOrder.isEmpty())
-        {
-            throw new OrderDetailsNotFoundException("No Order exist for id "+id) ;
+        if (updateOrder.isEmpty()) {
+            throw new OrderDetailsNotFoundException("No Order exist for id " + id);
         }
 
 
-            Order order = updateOrder.get();
+        Order order = updateOrder.get();
 
-            order.setUserId(orderRequest.getUserId());
-            order.setProductId(orderRequest.getProductId());
-            order.setQuantity(orderRequest.getQuantity());
+        OrderMapper.updatedEntity(order, orderRequest);
 
-            orderRepository.save(order);
+        orderRepository.save(order);
 
-            return new OrderResponse(order.getId(),order.getUserId(),order.getProductId(),order.getQuantity(),
-                    order.getTotalAmount(),order.getStatus(),order.getCreatedAt(),order.getUpdatedAt());
+        return new OrderResponse(order.getId(), order.getUserId(), order.getProductId(), order.getQuantity(),
+                order.getTotalAmount(), order.getStatus(), order.getCreatedAt(), order.getUpdatedAt());
 
     }
 
     @Override
     public void deleteOrder(Long id) {
 
-        Optional<Order> ordders = orderRepository.findById(id) ;
-
-        if(ordders.isPresent()) {
+        if(orderRepository.existsById(id)) {
             orderRepository.deleteById(id);
         }
         else {
             throw new OrderDetailsNotFoundException("No Order exist for id "+id) ;
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public void deletOrderByUserId(Long userId) {
+        if(orderRepository.existsByUserId(userId))
+        {
+            orderRepository.deleteByUserId(userId);
+        }
+        else{
+
+            throw new OrderDetailsNotFoundException("No Order exist for User id "+userId) ;
+        }
+    }
+
+
+    @Transactional
+    @Override
+    public void deleteOrderByProductId(Long productId) {
+
+        if(orderRepository.existsByProductId(productId))
+        {
+            orderRepository.deleteByProductId(productId);
+        }
+        else {
+            throw new OrderDetailsNotFoundException("No Order exist for Product id "+productId) ;
         }
 
     }

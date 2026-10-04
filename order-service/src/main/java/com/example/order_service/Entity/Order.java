@@ -45,6 +45,12 @@ public class Order {
         }
     }
 
+    @PreUpdate
+    public void preUpdate()
+    {
+        updatedAt = LocalDateTime.now();
+    }
+
     public Long getId() {
         return id;
     }

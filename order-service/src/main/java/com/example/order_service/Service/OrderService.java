@@ -21,4 +21,7 @@ public interface OrderService {
    public void deleteOrder(Long id) ;
 
 
+    public void deletOrderByUserId(Long userId);
+
+   public void deleteOrderByProductId(Long productId);
 }

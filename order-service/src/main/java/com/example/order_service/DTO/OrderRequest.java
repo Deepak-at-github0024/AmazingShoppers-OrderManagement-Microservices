@@ -8,6 +8,7 @@ public class OrderRequest {
     private Long userId;
     private Long productId;
     private Integer quantity;
+    private OrderStatus status;
 
     public Long getUserId() {
         return userId;
@@ -33,12 +34,21 @@ public class OrderRequest {
         this.quantity = quantity;
     }
 
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "OrderRequest{" +
                 "userId=" + userId +
                 ", productId=" + productId +
                 ", quantity=" + quantity +
+                ", status=" + status +
                 '}';
     }
 }
